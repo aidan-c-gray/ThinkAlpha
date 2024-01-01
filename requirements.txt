@@ -4,3 +4,7 @@ numpy
 pytest
 alpha_vantage
 requests
+beautifulsoup4
+jupyter
+ipykernel
+pytest
