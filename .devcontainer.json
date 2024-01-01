@@ -1,0 +1,12 @@
+{
+    "name": "ThinkAlpha Devcontainer",
+    "image": "python:3.9",
+    "settings": {
+        "terminal.integrated.shell.linux": "/bin/bash"
+    },
+    "extensions": [
+        "ms-python.python"
+    ],
+    "forwardPorts": [8888],
+    "postCreateCommand": "pip install -r requirements.txt"
+}
