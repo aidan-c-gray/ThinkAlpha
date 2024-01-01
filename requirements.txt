@@ -3,3 +3,4 @@ matplotlib
 numpy
 pytest
 alpha_vantage
+requests
