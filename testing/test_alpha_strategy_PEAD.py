@@ -1,3 +1,6 @@
+import sys
+sys.path.append('/app')
+import pytest
 from src.alpha_strategy_PEAD import get_small_cap_value, get_earnings_data, get_small_cap_earnings_data, calculate_earnings_drift
 import pandas as pd
 

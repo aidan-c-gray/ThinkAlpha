@@ -1,3 +1,5 @@
+import sys
+sys.path.append('/app')
 import pytest
 from unittest.mock import patch
 from src.alpha_strategy_api import api_ping
