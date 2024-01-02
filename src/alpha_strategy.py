@@ -4,9 +4,10 @@ import requests
 import pandas as pd
 from bs4 import BeautifulSoup as soup
 
-# AlphaVantage API Key (You can get one by signing up on their website)
+# Personal free API key
 api_key = 'IJAW4T1JRMN8CQ9Z'
 
+# takes function and symbol and returns data retrieved from alphavantage api
 def api_ping(function, symbol):
     if symbol == "MOM":
             url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={api_key}'
@@ -51,16 +52,14 @@ def calculate_earnings_drift(earnings_df):
     if earnings_df is None or earnings_df.empty:
         return None
 
-    # Convert 'reportedEPS' column to numeric (float)
     earnings_df["reportedEPS"] = pd.to_numeric(earnings_df["reportedEPS"], errors='coerce')
 
     # Calculate drift as the difference between the closing price before and after earnings
-    earnings_df["Earnings_Drift"] = earnings_df["reportedEPS"] - earnings_df["reportedEPS"].shift(1)
 
     return earnings_df
 
 if __name__ == "__main__":
-    symbol = "AAPL"  # Replace with the symbol of the company you want to analyze
+    symbol = "AAPL"  
     earnings_data = get_earnings_data(symbol)
     earnings_drift = calculate_earnings_drift(earnings_data)
 
