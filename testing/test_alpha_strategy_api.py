@@ -1,4 +1,4 @@
-from src.alpha_strategy import get_earnings_data, calculate_earnings_drift, get_close_data
+from src.alpha_strategy_api import get_earnings_data, calculate_earnings_drift, get_close_data
 from unittest.mock import patch, Mock
 import pandas as pd
 
@@ -60,7 +60,7 @@ def test_get_earnings_data():
         mock_get.side_effect = Exception("Network Error")
         result_df = get_earnings_data("AAPL")
         assert result_df is None
-        
+
 # Unit tests for earnings drift calculations
 def test_calculate_earnings_drift():
     earnings_data = {
