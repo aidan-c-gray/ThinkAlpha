@@ -4,14 +4,16 @@ import pandas as pd
 from bs4 import BeautifulSoup as soup
 
 # Personal free API key
-api_key = '9EQWTW3JJFKP8BLY'
+api_key = 'HOZZSE2154NAZOO7'
 
 # takes function and symbol and returns data retrieved from alphavantage api
 def api_ping(function, symbol):
     if function == "MOM":
         url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={api_key}'
     elif function == "TIME_SERIES_DAILY":
-        url = f'https://www.alphavantage.co/query?function=TIME_SERIES_DAILY&symbol={symbol}&outputsize=full&apikey={api_key}'
+        url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&outputsize=full&apikey={api_key}'
+    elif function == "NEWS_SENTIMENT":
+        url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&limit=1000&apikey={api_key}'
     else:
         url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&apikey={api_key}'
     response = requests.get(url)
