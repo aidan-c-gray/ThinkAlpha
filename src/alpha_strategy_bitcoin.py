@@ -1,4 +1,4 @@
-from alpha_strategy_api import api_ping
+from .alpha_strategy_api import api_ping
 import pandas as pd
 from bs4 import BeautifulSoup as soup
 import matplotlib.pyplot as plt
@@ -26,8 +26,8 @@ def get_bitcoin_price_data(symbol):
         # Create a DataFrame with Date and Close Price columns
         df = pd.DataFrame({'Date': dates, 'Close Price': close_prices})
 
-        # Optionally, set the Date column as the DataFrame's index
-        df.set_index('Date', inplace=True)
+        file_name = 'data/bitcoin_daily_close.csv'
+        df.to_csv(file_name, index=False)
         return df
     else:
         return None
@@ -44,6 +44,8 @@ def get_bitcoin_news_sentiment(symbol):
             sentiment_scores.append(overall_sentiment_score)
         
         df = pd.DataFrame(sentiment_scores, columns=["Overall Sentiment Score"])
+        file_name = 'data/bitcoin_sentiment.csv'
+        df.to_csv(file_name, index=False)
         return df
     else:
         return None

@@ -1,4 +1,4 @@
-from alpha_strategy_api import api_ping
+from alpha_strategy_api import api_ping, get_stock_price_data
 import os
 import requests
 import pandas as pd
@@ -13,9 +13,18 @@ def get_largest_tech_stocks():
 def get_momentum_data(symbol):
     function_ = "MOM"
     data = api_ping(function=function_, symbol=symbol)
-    if "MOM" in data:
-        momentum_data = data["MOM"]
-        df = pd.DataFrame(momentum_data)
+    if "Technical Analysis: MOM" in data:
+        momentum_data = data["Technical Analysis: MOM"]
+        
+        # Convert the dictionary to a DataFrame
+        df = pd.DataFrame.from_dict(momentum_data, orient='index')
+        # Reset the index and rename columns
+        df = df.reset_index()
+        df.columns = ['date', 'mom_score']
+        
+        # Add a 'ticker' column with the symbol
+        df['ticker'] = symbol
+        
         return df
     else:
         return None
@@ -24,11 +33,28 @@ def get_momentum_data(symbol):
 def retrieve_momentum_data_for_tech_stocks():
     tech_stocks = get_largest_tech_stocks()
     
-    momentum_data_dict = {}
-    
+    data_dict = {}
+    combined_df = pd.DataFrame()
     for symbol in tech_stocks:
-        momentum_data = get_momentum_data(symbol)
-        if momentum_data is not None:
-            momentum_data_dict[symbol] = momentum_data
-    
-    return momentum_data_dict
+        df = get_momentum_data(symbol)
+        if df is not None:
+            combined_df = pd.concat([combined_df, df], ignore_index=True)
+            data_dict[symbol] = (df[['date', 'mom_score']])
+    file_name = 'data/momentum_tech.csv'
+    combined_df.to_csv(file_name, index=False)
+    return data_dict
+
+def get_tech_sector_data():
+    tech_stocks = get_largest_tech_stocks()
+    for item in tech_stocks:
+        test= get_stock_price_data(item)
+        print(test)
+        
+
+
+if __name__ == "__main__":
+    symbol = get_largest_tech_stocks()
+    # momentum = retrieve_momentum_data_for_tech_stocks()
+    # momentum_aapl = momentum["AAPL"]
+    # print(momentum_aapl[momentum_aapl["date"] == '2023-12-07']['mom_score'])
+    data = get_tech_sector_data()
