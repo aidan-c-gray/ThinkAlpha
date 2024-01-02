@@ -1,4 +1,4 @@
-IMAGE = python:3.9
+IMAGE = thinkalpha
 
 unit-tests:
     docker build -t $(IMAGE) .
