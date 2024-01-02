@@ -1,4 +1,4 @@
-from alpha_strategy_api import api_ping
+from alpha_strategy_api import api_ping, get_stock_price_data
 import os
 import requests
 import pandas as pd
@@ -13,24 +13,35 @@ def get_small_cap_value():
 def get_earnings_data(symbol):
     function_ = "EARNINGS"
     data = api_ping(function=function_, symbol=symbol)
+    print(data)
     if "quarterlyEarnings" in data:
+        ticker = data["symbol"]
         earnings = data["quarterlyEarnings"]
         df = pd.DataFrame(earnings)
+        df['ticker'] = ticker
+        df = df[['fiscalDateEnding', 'reportedDate', 'ticker', 'reportedEPS', 'estimatedEPS', 'surprise', 'surprisePercentage']]
         return df
     else:
         return None
-    
-# Function to retrieve close data for a given symbol
-def get_close_price_data(symbol):
-    function_ = "TIME_SERIES_DAILY"
-    data = api_ping(function=function_, symbol=symbol)
-    if "close" in data:
-        close = data["close"]
-        df = pd.DataFrame(close)
-        return df
-    else:
-        None
 
+def get_small_cap_earnings_data():
+    small_cap_value = get_small_cap_value()
+    data_dict = {}
+    combined_df = pd.DataFrame()
+    for item in small_cap_value:
+        df = get_earnings_data(item)
+        if df is not None:
+            combined_df = pd.concat([combined_df, df], ignore_index=True)
+            data_dict[item] = (df[['fiscalDateEnding', 'reportedDate', 'reportedEPS', 'estimatedEPS', 'surprise', 'surprisePercentage']])
+    file_name = 'data/earnings_tech.csv'
+    combined_df.to_csv(file_name, index=False)
+    return data_dict
+        
+def get_small_cap_close_data():
+    small_cap_value = get_small_cap_value()
+    for item in small_cap_value:
+        get_stock_price_data(item)
+        
 
 # Function to calculate earnings drift
 def calculate_earnings_drift(earnings_df):
@@ -40,5 +51,9 @@ def calculate_earnings_drift(earnings_df):
     earnings_df["reportedEPS"] = pd.to_numeric(earnings_df["reportedEPS"], errors='coerce')
 
     # Calculate drift as the difference between the closing price before and after earnings
-
     return earnings_df
+
+
+if __name__ == "__main__":
+    # get_small_cap_close_data()
+    get_small_cap_earnings_data()

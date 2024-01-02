@@ -53,8 +53,8 @@ def get_tech_sector_data():
 
 
 if __name__ == "__main__":
-    symbol = get_largest_tech_stocks()
+    get_largest_tech_stocks()
     # momentum = retrieve_momentum_data_for_tech_stocks()
     # momentum_aapl = momentum["AAPL"]
     # print(momentum_aapl[momentum_aapl["date"] == '2023-12-07']['mom_score'])
-    data = get_tech_sector_data()
+    # get_tech_sector_data()
