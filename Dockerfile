@@ -1,5 +1,5 @@
 # Use an official Python runtime as a parent image
-FROM thinkalpha
+FROM python:3.9
 
 COPY . /app/
 
