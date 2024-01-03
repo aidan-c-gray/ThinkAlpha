@@ -1,4 +1,4 @@
-from alpha_strategy_api import api_ping, get_stock_price_data
+from .alpha_strategy_api import api_ping, get_stock_price_data
 import os
 import requests
 import pandas as pd
