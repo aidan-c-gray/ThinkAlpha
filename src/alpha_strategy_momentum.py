@@ -1,8 +1,5 @@
 from .alpha_strategy_api import api_ping, get_stock_price_data
 import os
-import requests
-import pandas as pd
-from bs4 import BeautifulSoup as soup
 
 # Function to retrieve the list of largest tech industry stocks
 def get_largest_tech_stocks():

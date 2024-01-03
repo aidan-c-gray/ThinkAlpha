@@ -1,5 +1,3 @@
-
-import pytest
 from src.alpha_strategy_momentum import get_largest_tech_stocks, get_momentum_data, retrieve_momentum_data_for_tech_stocks, get_tech_sector_data
 
 def test_get_largest_tech_stocks():

@@ -1,10 +1,6 @@
 """
 Basic alpha strategy for Bitcoin
 """
-
-import pandas as pd
-from bs4 import BeautifulSoup as soup
-import matplotlib.pyplot as plt
 from .alpha_strategy_api import api_ping
 
 def get_bitcoin_price_data(symbol):

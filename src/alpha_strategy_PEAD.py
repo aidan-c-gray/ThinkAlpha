@@ -1,8 +1,5 @@
 from .alpha_strategy_api import api_ping, get_stock_price_data
 import os
-import requests
-import pandas as pd
-from bs4 import BeautifulSoup as soup
 
 # Function to retrieve the list of value stocks greater than 250M MC filtered for yield and p/e
 def get_small_cap_value():

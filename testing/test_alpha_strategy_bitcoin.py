@@ -1,5 +1,4 @@
 
-import pytest
 from src.alpha_strategy_bitcoin import get_bitcoin_news_sentiment, get_bitcoin_price_data
 from unittest.mock import patch
 from src.alpha_strategy_bitcoin import get_bitcoin_price_data, get_bitcoin_news_sentiment
@@ -22,7 +21,6 @@ def test_get_bitcoin_price_data(mock_api_ping):
     assert bitcoin_price_data.shape == (2, 5)
     assert bitcoin_price_data.iloc[0]['Close'] == 30500.00
     assert bitcoin_price_data.iloc[1]['Close'] == 31800.00
-print(get_bitcoin_price_data("BTCUSD"))
 @patch('alpha_strategy_api.api_ping')
 def test_get_bitcoin_news_sentiment(mock_api_ping):
     # Mock API response
