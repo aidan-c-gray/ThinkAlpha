@@ -25,6 +25,7 @@
 			"extensions.verifySignature" : false
 		}
 	},
+	"remoteUser": "appuser",
 	"runArgs": [
 	 	"--env-file", "secrets.env",
 	 	"--network", "host"

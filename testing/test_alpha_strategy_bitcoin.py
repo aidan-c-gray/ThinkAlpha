@@ -1,5 +1,4 @@
-import sys
-sys.path.append('/app')
+
 import pytest
 from src.alpha_strategy_bitcoin import get_bitcoin_news_sentiment, get_bitcoin_price_data
 from unittest.mock import patch
