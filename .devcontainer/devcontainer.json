@@ -1,5 +1,5 @@
 {
-	"name": "aidans-test-devcontiner", // container name
+	"name": "thinkalpha", // container name
 	"context": "..",
 	"dockerFile": "../Dockerfile",
 	"customizations":{
