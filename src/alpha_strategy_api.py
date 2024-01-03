@@ -2,12 +2,13 @@ import os
 import requests
 import pandas as pd
 from bs4 import BeautifulSoup as soup
+import secrets
 
-# Personal free API key
-api_key = 'HOZZSE2154NAZOO7'
 
+api_key = os.environ.get("API_KEY")
 # takes function and symbol and returns data retrieved from alphavantage api
 def api_ping(function, symbol):
+    print(api_key)
     if function == "MOM":
         url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={api_key}'
     elif function == "TIME_SERIES_DAILY":
