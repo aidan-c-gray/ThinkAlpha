@@ -45,12 +45,12 @@ def calc_earnings_drift():
     earnings_df = pd.read_csv('data/earnings_tech.csv')
     combined_data = []
     time_window = 75
+    earnings_df = earnings_df.dropna()
 
     for index, row in earnings_df.iterrows():
         ticker = row["ticker"]
         reported_date = datetime.strptime(row["reportedDate"], "%Y-%m-%d")
         surprise_percentage = row["surprisePercentage"]
-
         # Check if the price data file for the stock exists
         price_data_file = f'data/{ticker}_daily_close.csv'
 
@@ -59,23 +59,31 @@ def calc_earnings_drift():
             price_df = pd.read_csv(price_data_file, parse_dates=["Date"])
 
             # Filter price data for dates within the time window
-            start_index = price_df[price_df["Date"] > reported_date].index[0]
-            end_index = start_index + time_window
-
+            # start_index = price_df[price_df["Date"] > reported_date].index[price_df[price_df["Date"] > reported_date].count()-1]
+            # Reverse the DataFrame and find the last index where the condition is met
+            start_index = price_df[::-1][price_df["Date"] > reported_date].index[0]
+            end_index = start_index - time_window
+            print(start_index)
+            print("hi")
             # Check if end_index is within the DataFrame's index range
             if end_index < len(price_df):
-                price_data_within_window = price_df.loc[start_index:end_index]
-
+                price_data_within_window = price_df.loc[end_index:start_index]
+                print(price_data_within_window)
                 # Calculate the number of trading days within the time window
                 trading_days_count = len(price_data_within_window)
 
                 if trading_days_count >= time_window:
                     # Calculate the price drift
-                    initial_price = price_data_within_window.iloc[0]["Close Price"]
-                    final_price = price_data_within_window.iloc[time_window]["Close Price"]
+                    final_price = price_data_within_window.iloc[0]["Close Price"]
+                    # print(initial_price)
+                    initial_price = price_data_within_window.iloc[time_window]["Close Price"]
+                    # print(final_price)
                     price_drift = final_price - initial_price
 
                     # Append data to the combined data list as a dictionary
+                    print("-")
+                    print(ticker)
+                    print(surprise_percentage)
                     combined_data.append({
                         "reportedDate": reported_date,
                         "surprisePercentage": surprise_percentage,
