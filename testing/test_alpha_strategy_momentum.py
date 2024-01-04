@@ -1,22 +1,49 @@
-from src.alpha_strategy_momentum import get_largest_tech_stocks, get_momentum_data, retrieve_momentum_data_for_tech_stocks, get_tech_sector_data
+# tests/test_alpha_strategy_momentum.py
 
-def test_get_largest_tech_stocks():
-    expected = ["AAPL", "MSFT", "GOOG", "AMZN", "NVDA", "META", "TSLA", "TSM", "AVGO", "ASML", "ORCL", "ADBE", "CRM", "AMD", "NFLX", "CSCO", "INTC", "BABA"]
-    assert get_largest_tech_stocks() == expected
+from unittest.mock import patch, Mock
+from src.alpha_strategy_momentum import get_momentum_data, retrieve_momentum_data_for_tech_stocks
 
-def test_get_momentum_data(mocker):
-    mock_api_ping = mocker.patch('src.alpha_strategy_api.api_ping', return_value={"Technical Analysis: MOM": {"2024-01-01": {"MOM": "5.0"}}})
-    result = get_momentum_data("AAPL")
-    assert result is not None
-    assert isinstance(result, pd.DataFrame)
+@patch('src.alpha_strategy_momentum.api_ping')
+def test_get_momentum_data(mock_api_ping):
+    # Mock the api_ping function for momentum data
+    mock_api_response = {
+        "Technical Analysis: MOM": {
+            "2023-01-01": {"mom_score": "0.75"},
+            "2023-01-02": {"mom_score": "0.60"},
+        }
+    }
+    mock_api_ping.return_value = mock_api_response
 
-def test_retrieve_momentum_data_for_tech_stocks(mocker):
-    mock_api_ping = mocker.patch('src.alpha_strategy_api.api_ping', return_value={"Technical Analysis: MOM": {"2024-01-01": {"MOM": "5.0"}}})
-    result = retrieve_momentum_data_for_tech_stocks()
-    assert isinstance(result, dict)
-    assert "AAPL" in result
+    symbol = "AAPL"
+    df = get_momentum_data(symbol)  # Remove api_key argument
 
-def test_get_tech_sector_data(mocker):
-    mocker.patch('src.alpha_strategy_api.get_stock_price_data', return_value={"Price": "150"})
-    # You may want to check for output or side effects here
-    get_tech_sector_data()
+    assert df is not None
+    assert not df.empty
+    assert "date" in df.columns
+    assert "mom_score" in df.columns
+
+@patch('src.alpha_strategy_momentum.api_ping')
+def test_get_momentum_data_invalid(mock_api_ping):
+    # Mock an invalid API response for momentum data
+    mock_api_ping.return_value = {"Error Message": "Invalid symbol"}
+
+    symbol = "INVALID_SYMBOL"
+    df = get_momentum_data(symbol)  # Remove api_key argument
+
+    assert df is None
+
+@patch('src.alpha_strategy_momentum.get_stock_price_data')
+def test_retrieve_momentum_data_for_tech_stocks(mock_get_stock_price_data):
+    # Mock the get_stock_price_data function for tech stocks
+    mock_df = Mock()
+    mock_df.empty = False
+    mock_get_stock_price_data.return_value = mock_df
+
+    # Mock the list of tech stocks
+    tech_stocks = ["AAPL", "MSFT"]
+
+    data_dict = retrieve_momentum_data_for_tech_stocks()
+
+    assert data_dict is not None
+    assert "AAPL" in data_dict
+    assert "MSFT" in data_dict

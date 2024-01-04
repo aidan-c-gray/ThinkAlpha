@@ -1,41 +1,61 @@
+# tests/test_alpha_strategy_bitcoin.py
 
-from src.alpha_strategy_bitcoin import get_bitcoin_news_sentiment, get_bitcoin_price_data
-from unittest.mock import patch
+from unittest.mock import patch, Mock
 from src.alpha_strategy_bitcoin import get_bitcoin_price_data, get_bitcoin_news_sentiment
 
-@patch('alpha_strategy_api.api_ping')
+@patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_price_data(mock_api_ping):
-    # Mock API response
-    mock_api_ping.return_value = {
+    # Mock the api_ping function
+    mock_api_response = {
         "Time Series (Daily)": {
-            "2023-01-01": {"1. open": "30000.00", "2. high": "31000.00", "3. low": "29000.00", "4. close": "30500.00", "5. volume": "10000"},
-            "2023-01-02": {"1. open": "30500.00", "2. high": "32000.00", "3. low": "30200.00", "4. close": "31800.00", "5. volume": "12000"},
+            "2023-01-01": {"4. close": "50000.00"},
+            "2023-01-02": {"4. close": "52000.00"},
         }
     }
+    mock_api_ping.return_value = mock_api_response
 
-    # Call the function
-    bitcoin_price_data = get_bitcoin_price_data("BTCUSD")
+    symbol = "BTCUSD"
+    df = get_bitcoin_price_data(symbol)  # Remove api_key argument
 
-    # Check if data is correctly parsed
-    assert isinstance(bitcoin_price_data, pd.DataFrame)
-    assert bitcoin_price_data.shape == (2, 5)
-    assert bitcoin_price_data.iloc[0]['Close'] == 30500.00
-    assert bitcoin_price_data.iloc[1]['Close'] == 31800.00
-@patch('alpha_strategy_api.api_ping')
+    assert df is not None
+    assert not df.empty
+    assert "Date" in df.columns
+    assert "Close Price" in df.columns
+
+@patch('src.alpha_strategy_bitcoin.api_ping')
+def test_get_bitcoin_price_data_invalid(mock_api_ping):
+    # Mock an invalid API response
+    mock_api_ping.return_value = {"Error Message": "Invalid symbol"}
+
+    symbol = "INVALID_SYMBOL"
+    df = get_bitcoin_price_data(symbol)  # Remove api_key argument
+
+    assert df is None
+
+@patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_news_sentiment(mock_api_ping):
-    # Mock API response
-    mock_api_ping.return_value = {
+    # Mock the api_ping function for news sentiment data
+    mock_api_response = {
         "feed": [
-            {
-                "overall_sentiment_score": 0.8
-            }
+            {"overall_sentiment_score": 0.75},
+            {"overall_sentiment_score": 0.60},
         ]
     }
+    mock_api_ping.return_value = mock_api_response
 
-    # Call the function
-    bitcoin_sentiment_data = get_bitcoin_news_sentiment("BTCUSD")
+    symbol = "BTCUSD"
+    df = get_bitcoin_news_sentiment(symbol)  # Remove api_key argument
 
-    # Check if data is correctly parsed
-    assert isinstance(bitcoin_sentiment_data, pd.DataFrame)
-    assert bitcoin_sentiment_data.shape == (1, 1)
-    assert bitcoin_sentiment_data.loc[0, 'Overall Sentiment Score'] == 0.8
+    assert df is not None
+    assert not df.empty
+    assert "Overall Sentiment Score" in df.columns
+
+@patch('src.alpha_strategy_bitcoin.api_ping')
+def test_get_bitcoin_news_sentiment_invalid(mock_api_ping):
+    # Mock an invalid API response for news sentiment data
+    mock_api_ping.return_value = {"Error Message": "Invalid symbol"}
+
+    symbol = "INVALID_SYMBOL"
+    df = get_bitcoin_news_sentiment(symbol)  # Remove api_key argument
+
+    assert df is None

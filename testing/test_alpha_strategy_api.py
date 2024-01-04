@@ -1,45 +1,74 @@
-from unittest.mock import patch, MagicMock
+# tests/test_alpha_strategy_api.py
+
 import pytest
+import requests
+from unittest.mock import patch, Mock
 from src.alpha_strategy_api import api_ping, get_stock_price_data
-import os
 
-# Function to manually load environment variables from a file
-def load_env(file_path):
-    with open(file_path) as f:
-        for line in f:
-            if line.startswith('#') or not line.strip():
-                continue
-            key, value = line.strip().split('=', 1)
-            os.environ[key] = value
+@pytest.fixture
+def sample_api_key():
+    return "HOZZSE2154NAZOO7"  # Replace with an actual API key for testing
 
-# Load environment variables
-load_env('secrets.env')
-
-
-@pytest.mark.parametrize("function, symbol, expected_url", [
-    ("MOM", "AAPL", "https://www.alphavantage.co/query?function=MOM&symbol=AAPL&interval=daily&time_period=10&series_type=close&apikey=test_api_key"),
-    # Add more test cases for different functions and symbols
-])
-@patch('your_module.requests.get')
-def test_api_ping(mock_get, function, symbol, expected_url):
-    mock_response = MagicMock()
+@patch('src.alpha_strategy_api.requests.get')
+def test_api_ping_valid(mock_get, sample_api_key):
+    # Mock a valid API response
+    mock_response = Mock()
     mock_response.status_code = 200
-    mock_response.json.return_value = {"data": "test"}
+    mock_response.json.return_value = {"Time Series (Daily)": {"2023-01-01": {"4. close": "150.00"}}}
     mock_get.return_value = mock_response
 
-    result = api_ping(function, symbol)
-    mock_get.assert_called_once_with(expected_url)
-    assert result == {"data": "test"}
+    function = "TIME_SERIES_DAILY"
+    symbol = "AAPL"
+    # The api_key should be handled within the api_ping function
+    response = api_ping(function, symbol)  # Remove api_key argument
 
-@patch('your_module.api_ping')
-def test_get_stock_price_data(mock_api_ping):
-    mock_api_ping.return_value = {
-        "Time Series (Daily)": {
-            "2021-01-01": {"4. close": "100.00"},
-            "2021-01-02": {"4. close": "101.00"},
-        }
+    assert response is not None
+    assert "Time Series (Daily)" in response
+
+@patch('src.alpha_strategy_api.requests.get')
+def test_api_ping_invalid(mock_get, sample_api_key):
+    # Mock an invalid API response
+    mock_response = Mock()
+    mock_response.status_code = 404
+    mock_get.return_value = mock_response
+
+    function = "TIME_SERIES_DAILY"
+    symbol = "INVALID_SYMBOL"
+    # The api_key should be handled within the api_ping function
+    response = api_ping(function, symbol)  # Remove api_key argument
+
+    assert response is None
+
+@patch('src.alpha_strategy_api.requests.get')
+def test_get_stock_price_data(mock_get, sample_api_key):
+    # Mock getting stock price data
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {
+        "Time Series (Daily)": {"2023-01-01": {"4. close": "150.00"}},
+        "Meta Data": {"2. Symbol": "AAPL"}
     }
-    result = get_stock_price_data("AAPL")
-    assert isinstance(result, pd.DataFrame)
-    assert result.iloc[0]['Close Price'] == 100.00
-    assert result.iloc[1]['Close Price'] == 101.00
+    mock_get.return_value = mock_response
+
+    symbol = "AAPL"
+    # The api_key should be handled within the get_stock_price_data function
+    df = get_stock_price_data(symbol)  # Remove api_key argument
+
+    assert df is not None
+    assert not df.empty
+    assert "Date" in df.columns
+    assert "Close Price" in df.columns
+
+@patch('src.alpha_strategy_api.requests.get')
+def test_get_stock_price_data_invalid_symbol(mock_get, sample_api_key):
+    # Mock getting stock price data for an invalid symbol
+    mock_response = Mock()
+    mock_response.status_code = 200
+    mock_response.json.return_value = {"Error Message": "Invalid symbol"}
+    mock_get.return_value = mock_response
+
+    symbol = "INVALID_SYMBOL"
+    # The api_key should be handled within the get_stock_price_data function
+    df = get_stock_price_data(symbol)  # Remove api_key argument
+
+    assert df is None

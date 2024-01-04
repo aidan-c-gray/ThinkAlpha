@@ -1,5 +1,6 @@
-from .alpha_strategy_api import api_ping, get_stock_price_data
+from .alpha_strategy_api import api_ping, get_stock_price_data, clean_data
 import os
+import pandas as pd
 
 # Function to retrieve the list of largest tech industry stocks
 def get_largest_tech_stocks():
@@ -39,6 +40,7 @@ def retrieve_momentum_data_for_tech_stocks():
             data_dict[symbol] = (df[['date', 'mom_score']])
     file_name = 'data/momentum_tech.csv'
     combined_df.to_csv(file_name, index=False)
+    clean_data(df=combined_df, filename='data/earnings_momentum.csv')
     return data_dict
 
 def get_tech_sector_data():

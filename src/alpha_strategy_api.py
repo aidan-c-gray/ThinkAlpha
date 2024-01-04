@@ -1,11 +1,10 @@
 import os
 import secrets
-
-
+import pandas as pd
+import requests
 api_key = os.environ.get("API_KEY")
 # takes function and symbol and returns data retrieved from alphavantage api
 def api_ping(function, symbol):
-    print(api_key)
     if function == "MOM":
         url = f'https://www.alphavantage.co/query?function={function}&symbol={symbol}&interval=daily&time_period=10&series_type=close&apikey={api_key}'
     elif function == "TIME_SERIES_DAILY":
@@ -30,6 +29,7 @@ def get_stock_price_data(symbol):
     
     if "Time Series (Daily)" in data:
         daily_data = data["Time Series (Daily)"]
+    
         # Initialize empty lists to store dates and close prices
         dates = []
         close_prices = []
@@ -49,9 +49,17 @@ def get_stock_price_data(symbol):
 
         file_name = f'data/{symbol}_daily_close.csv'
         df.to_csv(file_name, index=False)
+        clean_data(df=df, filename=file_name)
         return df
     else:
         return None
+
+def clean_data(df, filename):
+    df.dropna(inplace=True)  # Remove rows with any null values
+    df.drop_duplicates(inplace=True)  # Remove duplicate rows
+
+    # Save the cleaned DataFrames back to CSV files if needed
+    df.to_csv(filename, index=False)
 
 
 if __name__ == "__main__":

@@ -1,8 +1,9 @@
 """
 Basic alpha strategy for Bitcoin
 """
-from .alpha_strategy_api import api_ping
-
+from alpha_strategy_api import api_ping, clean_data
+import pandas as pd
+import requests
 def get_bitcoin_price_data(symbol):
     function_ = "TIME_SERIES_DAILY"
     data = api_ping(function=function_, symbol=symbol)
@@ -28,6 +29,7 @@ def get_bitcoin_price_data(symbol):
 
         file_name = 'data/bitcoin_daily_close.csv'
         df.to_csv(file_name, index=False)
+        clean_data(df=df, filename=file_name)
         return df
     else:
         return None
@@ -46,10 +48,11 @@ def get_bitcoin_news_sentiment(symbol):
         df = pd.DataFrame(sentiment_scores, columns=["Overall Sentiment Score"])
         file_name = 'data/bitcoin_sentiment.csv'
         df.to_csv(file_name, index=False)
+        clean_data(df=df, filename=file_name)
         return df
     else:
         return None
-    
+
 if __name__ == "__main__":
     symbol = "BTCUSD"
     # Retrieve Bitcoin price data
@@ -57,6 +60,5 @@ if __name__ == "__main__":
     
     # Retrieve Bitcoin news sentiment data
     bitcoin_sentiment_data = get_bitcoin_news_sentiment(symbol=symbol)
-    
     print(bitcoin_price_data)
     print(bitcoin_sentiment_data)
