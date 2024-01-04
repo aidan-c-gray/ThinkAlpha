@@ -1,20 +1,29 @@
-To-Do Tuesday:
+Next Steps with Project
 
-- Pull and store momentum data of tech industry (complete)
-- Pull and store news sentiments and bitcoin price data (complete)
-- Pull and store post earnings drift on small cap value stocks (complete)
+PEAD
+- Strategy: go long or short stock after reportDate for earnings based on earnings suprise. Go long if
+beat short if miss. Targets stocks that might be under the radar and still have alpha for this strategy 
+- Test: Need to backtest to find optimal length of holding as well as well optimal earnings miss and beat 
+percentage
+- Stage: Data is collected and cleaned and mostly visualized (earnings drift is not)
 
-- Clean momentum data
-- Clean new data
-- Clear earnings data
-- Clean price data
+Momentum
+- Strategy: go long or short based on momentum. Go long when momentum is above a certain threshold and
+short when below. Focused on large cap tech stocks as they are the most seen by the public and discussed
+on forums so their momentum influences recreational traders more than other stocks
+- Test: Need to backtest to find optimal momentum threshold and hodling period 
+- Stage: Data is collected for the stocks and the momentum and cleaned and visualized. Ready for further
+development and testing of strategy
 
-To-Do Wednesday 
-
-- Analysis of momentum strategy 
-- Analysis of sentiment strategy 
-- Analysis of PEAD strategy
-
-- Simulate the momentum strategy 
-- Simulate the sentiment strategy 
-- Simulate the PEAD strategy
+Bitcoin
+- Strategy: go long or short bitcoin based on sentiment analysis. Long when sentiment is very negative 
+and short when sentiment is very positive. This is because over the past few years I have noticed that 
+positive sentiment online and in the news is much more prevelant as bitcoin is increasing in price. Follows
+the idea of if you hear your barber giving stocks advice its time to sell. The reverse works as well as
+bitcoin tends to dry up in the news when it plateaus in price. Looking at the bitcoin price graph there 
+is rarely any sustained highs so the plateau is usually at local minimums. 
+- Test: Need to backtest using the price of bitcoin and sentiment data to see what sentiment score and 
+holding time is optimal
+- Stage: price data is collected, cleaned, and visualized. The sentiment data needs work. At the moment it
+is just a collection of all overall sentiment scores. I need to add the date of the article to the sentiment
+scores. 
