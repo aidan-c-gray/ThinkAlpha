@@ -1,4 +1,4 @@
-export IMAGE = thinkalpha
+IMAGE = thinkalpha
 
 unit-tests: 
 	docker build -t $(IMAGE) .
