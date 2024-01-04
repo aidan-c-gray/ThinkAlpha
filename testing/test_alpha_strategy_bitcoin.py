@@ -1,11 +1,22 @@
-# tests/test_alpha_strategy_bitcoin.py
+''''
+test_alpha_strategy_bitcoin.py
+
+This module contains unit tests for the alpha_strategy_bitcoin module.
+'''
 
 from unittest.mock import patch, Mock
 from src.alpha_strategy_bitcoin import get_bitcoin_price_data, get_bitcoin_news_sentiment
 
 @patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_price_data(mock_api_ping):
-    # Mock the api_ping function
+    ''''
+    Test the get_bitcoin_price_data function.
+
+    Args:
+        mock_api_ping: A mocked version of the api_ping function.
+
+    This test mocks getting Bitcoin price data and checks if the function returns the expected DataFrame.
+    '''
     mock_api_response = {
         "Time Series (Daily)": {
             "2023-01-01": {"4. close": "50000.00"},
@@ -15,7 +26,7 @@ def test_get_bitcoin_price_data(mock_api_ping):
     mock_api_ping.return_value = mock_api_response
 
     symbol = "BTCUSD"
-    df = get_bitcoin_price_data(symbol)  # Remove api_key argument
+    df = get_bitcoin_price_data(symbol)  
 
     assert df is not None
     assert not df.empty
@@ -24,17 +35,31 @@ def test_get_bitcoin_price_data(mock_api_ping):
 
 @patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_price_data_invalid(mock_api_ping):
-    # Mock an invalid API response
+    ''''
+    Test the get_bitcoin_price_data function with an invalid symbol.
+
+    Args:
+        mock_api_ping: A mocked version of the api_ping function.
+
+    This test mocks an invalid API response and checks if the function handles it correctly.
+    '''
     mock_api_ping.return_value = {"Error Message": "Invalid symbol"}
 
     symbol = "INVALID_SYMBOL"
-    df = get_bitcoin_price_data(symbol)  # Remove api_key argument
+    df = get_bitcoin_price_data(symbol)  
 
     assert df is None
 
 @patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_news_sentiment(mock_api_ping):
-    # Mock the api_ping function for news sentiment data
+    ''''
+    Test the get_bitcoin_news_sentiment function.
+
+    Args:
+        mock_api_ping: A mocked version of the api_ping function.
+
+    This test mocks getting Bitcoin news sentiment data and checks if the function returns the expected DataFrame.
+    '''
     mock_api_response = {
         "feed": [
             {"overall_sentiment_score": 0.75},
@@ -44,7 +69,7 @@ def test_get_bitcoin_news_sentiment(mock_api_ping):
     mock_api_ping.return_value = mock_api_response
 
     symbol = "BTCUSD"
-    df = get_bitcoin_news_sentiment(symbol)  # Remove api_key argument
+    df = get_bitcoin_news_sentiment(symbol)  
 
     assert df is not None
     assert not df.empty
@@ -52,10 +77,17 @@ def test_get_bitcoin_news_sentiment(mock_api_ping):
 
 @patch('src.alpha_strategy_bitcoin.api_ping')
 def test_get_bitcoin_news_sentiment_invalid(mock_api_ping):
-    # Mock an invalid API response for news sentiment data
+    ''''
+    Test the get_bitcoin_news_sentiment function with an invalid symbol.
+
+    Args:
+        mock_api_ping: A mocked version of the api_ping function.
+
+    This test mocks an invalid API response for news sentiment data and checks if the function handles it correctly.
+    '''
     mock_api_ping.return_value = {"Error Message": "Invalid symbol"}
 
     symbol = "INVALID_SYMBOL"
-    df = get_bitcoin_news_sentiment(symbol)  # Remove api_key argument
+    df = get_bitcoin_news_sentiment(symbol)  
 
     assert df is None

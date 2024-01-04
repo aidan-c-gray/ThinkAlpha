@@ -1,38 +1,56 @@
+'''
+collects data to be used for momentum strategy from alpha vantage. Stocks used are a subset of the largest
+tech stocks
+'''
 from .alpha_strategy_api import api_ping, get_stock_price_data, clean_data
 import os
 import pandas as pd
 
-# Function to retrieve the list of largest tech industry stocks
+'''
+Function to retrieve the list of largest tech industry stocks
+'''
 def get_largest_tech_stocks():
     top_tech_stocks = ["AAPL", "MSFT", "GOOG", "AMZN", "NVDA", "META", "TSLA", "TSM", "AVGO", "ASML", "ORCL", "ADBE", "CRM", "AMD", "NFLX", "CSCO", "INTC", "BABA"]
     return top_tech_stocks
 
-# Function to retrieve momentum data for a given symbol/symbols
+'''
+Function to retrieve momentum data for a given symbol/stock
+'''
 def get_momentum_data(symbol):
     function_ = "MOM"
     data = api_ping(function=function_, symbol=symbol)
     if "Technical Analysis: MOM" in data:
         momentum_data = data["Technical Analysis: MOM"]
         
-        # Convert the dictionary to a DataFrame
+        '''
+        Convert the dictionary to a DataFrame
+        '''
         df = pd.DataFrame.from_dict(momentum_data, orient='index')
-        # Reset the index and rename columns
         df = df.reset_index()
         df.columns = ['date', 'mom_score']
         
-        # Add a 'ticker' column with the symbol
+        '''
+        Add a 'ticker' column with the symbol
+        '''
         df['ticker'] = symbol
         
         return df
     else:
         return None
 
-# Function to retrieve momentum data for the largest tech stocks
+'''
+Function to retrieve momentum data for the largest tech stocks 
+'''
 def retrieve_momentum_data_for_tech_stocks():
     tech_stocks = get_largest_tech_stocks()
     
     data_dict = {}
     combined_df = pd.DataFrame()
+
+    '''
+    iterates through tech stocks calling get_momentum_data for each stock creating a combined csv
+    of momentum scores
+    '''
     for symbol in tech_stocks:
         df = get_momentum_data(symbol)
         if df is not None:
@@ -43,6 +61,9 @@ def retrieve_momentum_data_for_tech_stocks():
     clean_data(df=combined_df, filename='data/earnings_momentum.csv')
     return data_dict
 
+'''
+calls function whcih retrieves stock price data for every stock in largest tech stocks
+'''
 def get_tech_sector_data():
     tech_stocks = get_largest_tech_stocks()
     for item in tech_stocks:

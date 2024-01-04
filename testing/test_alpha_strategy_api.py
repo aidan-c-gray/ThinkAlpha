@@ -1,4 +1,8 @@
-# tests/test_alpha_strategy_api.py
+''''
+test_alpha_strategy_api.py
+
+This module contains unit tests for the alpha_strategy_api module.
+'''
 
 import pytest
 import requests
@@ -7,11 +11,23 @@ from src.alpha_strategy_api import api_ping, get_stock_price_data
 
 @pytest.fixture
 def sample_api_key():
-    return "HOZZSE2154NAZOO7"  # Replace with an actual API key for testing
+    ''''
+    Fixture function that returns a sample API key for testing purposes.
+    Replace with an actual API key for testing.
+    '''
+    return "HOZZSE2154NAZOO7"
 
 @patch('src.alpha_strategy_api.requests.get')
 def test_api_ping_valid(mock_get, sample_api_key):
-    # Mock a valid API response
+    ''''
+    Test the api_ping function with a valid API response.
+
+    Args:
+        mock_get: A mocked version of the requests.get function.
+        sample_api_key: A sample API key for testing.
+
+    This test mocks a valid API response and checks if the function returns the expected response.
+    '''
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.json.return_value = {"Time Series (Daily)": {"2023-01-01": {"4. close": "150.00"}}}
@@ -19,29 +35,43 @@ def test_api_ping_valid(mock_get, sample_api_key):
 
     function = "TIME_SERIES_DAILY"
     symbol = "AAPL"
-    # The api_key should be handled within the api_ping function
-    response = api_ping(function, symbol)  # Remove api_key argument
+    response = api_ping(function, symbol) 
 
     assert response is not None
     assert "Time Series (Daily)" in response
 
 @patch('src.alpha_strategy_api.requests.get')
 def test_api_ping_invalid(mock_get, sample_api_key):
-    # Mock an invalid API response
+    ''''
+    Test the api_ping function with an invalid API response.
+
+    Args:
+        mock_get: A mocked version of the requests.get function.
+        sample_api_key: A sample API key for testing.
+
+    This test mocks an invalid API response and checks if the function handles it correctly.
+    '''
     mock_response = Mock()
     mock_response.status_code = 404
     mock_get.return_value = mock_response
 
     function = "TIME_SERIES_DAILY"
     symbol = "INVALID_SYMBOL"
-    # The api_key should be handled within the api_ping function
-    response = api_ping(function, symbol)  # Remove api_key argument
+    response = api_ping(function, symbol) 
 
     assert response is None
 
 @patch('src.alpha_strategy_api.requests.get')
 def test_get_stock_price_data(mock_get, sample_api_key):
-    # Mock getting stock price data
+    ''''
+    Test the get_stock_price_data function with a valid symbol.
+
+    Args:
+        mock_get: A mocked version of the requests.get function.
+        sample_api_key: A sample API key for testing.
+
+    This test mocks getting stock price data and checks if the function returns the expected DataFrame.
+    '''
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.json.return_value = {
@@ -51,7 +81,6 @@ def test_get_stock_price_data(mock_get, sample_api_key):
     mock_get.return_value = mock_response
 
     symbol = "AAPL"
-    # The api_key should be handled within the get_stock_price_data function
     df = get_stock_price_data(symbol)  # Remove api_key argument
 
     assert df is not None
@@ -61,14 +90,21 @@ def test_get_stock_price_data(mock_get, sample_api_key):
 
 @patch('src.alpha_strategy_api.requests.get')
 def test_get_stock_price_data_invalid_symbol(mock_get, sample_api_key):
-    # Mock getting stock price data for an invalid symbol
+    ''''
+    Test the get_stock_price_data function with an invalid symbol.
+
+    Args:
+        mock_get: A mocked version of the requests.get function.
+        sample_api_key: A sample API key for testing.
+
+    This test mocks getting stock price data for an invalid symbol and checks if the function handles it correctly.
+    '''
     mock_response = Mock()
     mock_response.status_code = 200
     mock_response.json.return_value = {"Error Message": "Invalid symbol"}
     mock_get.return_value = mock_response
 
     symbol = "INVALID_SYMBOL"
-    # The api_key should be handled within the get_stock_price_data function
-    df = get_stock_price_data(symbol)  # Remove api_key argument
+    df = get_stock_price_data(symbol)  
 
     assert df is None
